@@ -2,7 +2,7 @@
 import csv
 import re
 import sys
-from tabulate import tabulate
+from terminaltables import AsciiTable
 
 
 class GpaFile:
@@ -29,8 +29,9 @@ class GpaFile:
         self.gpa_data[year][semester] = []
 
     def show_grades(self, year, semester):
-        print('\t\tYEAR {} SEMESTER {}'.format(year, semester))
-        print(tabulate(self.gpa_data[year][semester], headers=['Course', 'Credits', 'Grade'], tablefmt='fancy_grid'))
+        table_instance = AsciiTable([['Course', 'Credits', 'Grade']] + self.gpa_data[year][semester],
+                                    title='YEAR {} SEMESTER {}'.format(year, semester))
+        print(table_instance.table)
 
 
 def get_filename():
