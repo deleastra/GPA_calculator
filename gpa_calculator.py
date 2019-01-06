@@ -23,7 +23,7 @@ class GpaFile:
                 semester = int(match_semester.group(2))
                 self.create_grades_dict(year, semester)
             elif row[0].isnumeric() and isinstance(row[1], str) and row[2].isnumeric() and isinstance(row[3], str):
-                self.gpa_data[year][semester].append([row[1], row[2], row[3]])
+                self.gpa_data[year][semester].append(row)
 
     def create_grades_dict(self, year, semester):
         if year not in self.gpa_data.keys():
@@ -31,18 +31,21 @@ class GpaFile:
         self.gpa_data[year][semester] = []
 
     def show_grades(self, year, semester):
-        table_instance = AsciiTable([['Course', 'Credits', 'Grade']] + self.gpa_data[year][semester],
+        table_instance = AsciiTable([['No.', 'Course', 'Credits', 'Grade']] + self.gpa_data[year][semester],
                                     title='YEAR {} SEMESTER {}'.format(year, semester))
+        table_instance.justify_columns[0] = 'center'
+        table_instance.justify_columns[2] = 'center'
+        table_instance.justify_columns[3] = 'center'
         print(table_instance.table)
         gpa, total_credits = self.calculate_gpa_and_credits(year, semester)
-        print('\tTotal Credits GPA: {}\tSemester GPA: {}'.format(gpa, total_credits))
+        print('\t\tTotal Credits GPA: {}\tSemester GPA: {}'.format(gpa, total_credits))
 
     def calculate_gpa_and_credits(self, year, semester):
         total_points = 0
         total_credits = 0
         for course in self.gpa_data[year][semester]:
-            total_points += int(course[1]) * gradeValue[course[2]]
-            total_credits += int(course[1])
+            total_points += int(course[2]) * gradeValue[course[3]]
+            total_credits += int(course[2])
         return total_credits, round(total_points / total_credits, 2)
 
 
@@ -55,18 +58,25 @@ def get_filename():
     return filename
 
 
-def enter_semester():
+def show_semester_data():
     try:
         year = int(input('Enter year: '))
         semester = int(input('Enter semester: '))
+        print('\n\n')
         gpa.show_grades(year, semester)
     except ValueError:
         print("Wrong input! Enter again!")
-        enter_semester()
+        show_semester_data()
     except KeyError:
         print("Invalid year or semester! Enter again!")
-        enter_semester()
+        show_semester_data()
 
 
-gpa = GpaFile(get_filename())
-enter_semester()
+filename = get_filename()
+gpa = GpaFile(filename)
+action = None
+while action != 'q':
+    print('-' * 70)
+    action = input('View[V] Insert[I] Edit[E] Save[S] Save As[A] Change File(C) Quit(Q): ').lower()
+    if action == 'v':
+        show_semester_data()
