@@ -1,6 +1,8 @@
-#! -*- codding: utf-8 -*-
+#! -*- coding: utf-8 -*-
 import csv
 import re
+import sys
+from tabulate import tabulate
 
 
 class GpaFile:
@@ -15,8 +17,8 @@ class GpaFile:
         for row in self.reader:
             match_semester = re.match(r'ปีการศึกษา (\d+) ภาคการศึกษาที่ (\d+)', row[0], re.M)
             if match_semester:
-                year = match_semester.group(1)
-                semester = match_semester.group(2)
+                year = int(match_semester.group(1))
+                semester = int(match_semester.group(2))
                 self.create_grades_dict(year, semester)
             elif row[0].isnumeric() and isinstance(row[1], str) and row[2].isnumeric() and isinstance(row[3], str):
                 self.gpa_data[year][semester].append([row[1], row[2], row[3]])
@@ -26,7 +28,32 @@ class GpaFile:
             self.gpa_data[year] = {}
         self.gpa_data[year][semester] = []
 
+    def show_grades(self, year, semester):
+        print('\t\tYEAR {} SEMESTER {}'.format(year, semester))
+        print(tabulate(self.gpa_data[year][semester], headers=['Course', 'Credits', 'Grade'], tablefmt='fancy_grid'))
 
-# filename = input("Enter Filename: ")
-filename = 'D:\Download\MY GPA - GPA_for_CSV (1).csv'
-gpa = GpaFile(filename)
+
+def get_filename():
+    if len(sys.argv) > 1:
+        filename = sys.argv[1]
+    else:
+        # filename = input("Enter Filename: ")
+        filename = 'csv_files/GPA.csv'
+    return filename
+
+
+def enter_semester():
+    try:
+        year = int(input('Enter year: '))
+        semester = int(input('Enter semester: '))
+        gpa.show_grades(year, semester)
+    except ValueError:
+        print("Wrong input! Enter again!")
+        enter_semester()
+    except KeyError:
+        print("Invalid year or semester! Enter again!")
+        enter_semester()
+
+
+gpa = GpaFile(get_filename())
+enter_semester()
