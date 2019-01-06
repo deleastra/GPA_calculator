@@ -4,6 +4,8 @@ import re
 import sys
 from terminaltables import AsciiTable
 
+gradeValue = {'A': 4, 'B+': 3.5, 'B': 3, 'C+': 2.5, 'C': 2, 'D+': 1.5, 'D': 1, 'F': 0}
+
 
 class GpaFile:
     def __init__(self, gpa_filename):
@@ -32,6 +34,16 @@ class GpaFile:
         table_instance = AsciiTable([['Course', 'Credits', 'Grade']] + self.gpa_data[year][semester],
                                     title='YEAR {} SEMESTER {}'.format(year, semester))
         print(table_instance.table)
+        gpa, total_credits = self.calculate_gpa_and_credits(year, semester)
+        print('\tTotal Credits GPA: {}\tSemester GPA: {}'.format(gpa, total_credits))
+
+    def calculate_gpa_and_credits(self, year, semester):
+        total_points = 0
+        total_credits = 0
+        for course in self.gpa_data[year][semester]:
+            total_points += int(course[1]) * gradeValue[course[2]]
+            total_credits += int(course[1])
+        return total_credits, round(total_points / total_credits, 2)
 
 
 def get_filename():
