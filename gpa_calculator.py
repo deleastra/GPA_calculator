@@ -48,11 +48,18 @@ class GpaFile:
             total_credits += int(course[2])
         return total_credits, round(total_points / total_credits, 2)
 
-    def edit_grades(self, year, semester):
+    def edit_semester(self, year, semester):
         action = None
         while action != 'b':
             self.show_grades(year, semester)
+            print('-' * 70)
             action = input("Add course[A] Edit course[E] Delete course[D] Back[B]: ").lower()
+            if action == 'a':
+                new_course_name = input('Enter new course name: ')
+                new_credits = input("Enter course's credits: ")
+                new_grade = input("Enter course's grade: ")
+                self.gpa_data[year][semester].append([len(self.gpa_data[year][semester]) + 1,
+                                                      new_course_name, new_credits, new_grade])
             if action == 'e':
                 course_no = int(input('Select course[Number]: ')) - 1
                 print('Edit course [' + self.gpa_data[year][semester][course_no][1] + ']')
@@ -69,6 +76,9 @@ class GpaFile:
                     new_grade = input('New course grade [' + self.gpa_data[year][semester][course_no][3] + ']: ') \
                                       or self.gpa_data[year][semester][course_no][3]
                     self.gpa_data[year][semester][course_no][3] = new_grade
+
+    def insert_semester(self):
+        pass
 
 
 def get_filename():
@@ -99,7 +109,7 @@ def edit_semester_data():
         year = int(input('Enter year: '))
         semester = int(input('Enter semester: '))
         print('\n\n')
-        gpa.edit_grades(year, semester)
+        gpa.edit_semester(year, semester)
     except ValueError:
         print("Wrong input! Enter again!")
         edit_semester_data()
@@ -118,3 +128,11 @@ while action != 'q':
         show_semester_data()
     if action == 'e':
         edit_semester_data()
+    if action == 'i':
+        pass
+    if action == 's':
+        pass
+    if action == 'a':
+        pass
+    if action == 'c':
+        pass
