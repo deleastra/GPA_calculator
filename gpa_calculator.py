@@ -76,6 +76,11 @@ class GpaFile:
                     new_grade = input('New course grade [' + self.gpa_data[year][semester][course_no][3] + ']: ') \
                                       or self.gpa_data[year][semester][course_no][3]
                     self.gpa_data[year][semester][course_no][3] = new_grade
+            if action == 'd':
+                course_no = int(input('Select course[Number]: ')) - 1
+                del self.gpa_data[year][semester][course_no]
+                for i in range(len(self.gpa_data[year][semester])):
+                    self.gpa_data[year][semester][i][0] = i+1
 
     def insert_semester(self):
         pass
