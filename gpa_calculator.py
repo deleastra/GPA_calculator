@@ -38,7 +38,7 @@ class GpaFile:
         table_instance.justify_columns[3] = 'center'
         print(table_instance.table)
         gpa, total_credits = self.calculate_gpa_and_credits(year, semester)
-        print('\t\tTotal Credits GPA: {}\tSemester GPA: {}'.format(gpa, total_credits))
+        print('\t\tTotal Credits: {}\tSemester GPA: {}'.format(gpa, total_credits))
 
     def calculate_gpa_and_credits(self, year, semester):
         total_points = 0
@@ -46,6 +46,8 @@ class GpaFile:
         for course in self.gpa_data[year][semester]:
             total_points += int(course[2]) * GpaFile.gradeValue[course[3]]
             total_credits += int(course[2])
+        if total_credits == 0:
+            return 0, 0
         return total_credits, round(total_points / total_credits, 2)
 
     def edit_semester(self, year, semester):
@@ -82,8 +84,9 @@ class GpaFile:
                 for i in range(len(self.gpa_data[year][semester])):
                     self.gpa_data[year][semester][i][0] = i+1
 
-    def insert_semester(self):
-        pass
+    def insert_semester(self, year, semester):
+        self.create_grades_dict(year, semester)
+        self.edit_semester(year, semester)
 
 
 def get_filename():
@@ -93,6 +96,17 @@ def get_filename():
         # filename = input("Enter Filename: ")
         filename = 'csv_files/GPA.csv'
     return filename
+
+
+def insert_semester_data():
+    try:
+        year = int(input('Enter year: '))
+        semester = int(input('Enter semester: '))
+        print('\n\n')
+        gpa.insert_semester(year, semester)
+    except ValueError:
+        print("Wrong input! Enter again!")
+        insert_semester_data()
 
 
 def show_semester_data():
@@ -128,13 +142,14 @@ gpa = GpaFile(filename)
 action = None
 while action != 'q':
     print('-' * 70)
+    print("Enter action")
     action = input('View[V] Insert[I] Edit[E] Save[S] Save As[A] Change File(C) Quit(Q): ').lower()
     if action == 'v':
         show_semester_data()
     if action == 'e':
         edit_semester_data()
     if action == 'i':
-        pass
+        insert_semester_data()
     if action == 's':
         pass
     if action == 'a':
