@@ -37,7 +37,7 @@ class GpaFile:
         table_instance.justify_columns[2] = 'center'
         table_instance.justify_columns[3] = 'center'
         print(table_instance.table)
-        gpa, total_credits = self.calculate_gpa_and_credits(year, semester)
+        total_credits, gpa = self.calculate_gpa_and_credits(year, semester)
         print('\t\tTotal Credits: {}\tSemester GPA: {}'.format(gpa, total_credits))
 
     def calculate_gpa_and_credits(self, year, semester):
@@ -82,11 +82,26 @@ class GpaFile:
                 course_no = int(input('Select course[Number]: ')) - 1
                 del self.gpa_data[year][semester][course_no]
                 for i in range(len(self.gpa_data[year][semester])):
-                    self.gpa_data[year][semester][i][0] = i+1
+                    self.gpa_data[year][semester][i][0] = i + 1
 
     def insert_semester(self, year, semester):
         self.create_grades_dict(year, semester)
         self.edit_semester(year, semester)
+
+    def save_csv(self, filename=None):
+        csv_file = open(filename, 'w', newline='')
+        csv_writer = csv.writer(csv_file, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+        for year in self.gpa_data.keys():
+            for semester in self.gpa_data[year].keys():
+                csv_writer.writerow(['ปีการศึกษา {} ภาคการศึกษาที่ {}'.format(year, semester), '', '', ''])
+                csv_writer.writerow(['ลำดับ', 'วิชา', 'หน่วยกิต', 'เกรด'])
+                for course in self.gpa_data[year][semester]:
+                    # print(course)
+                    csv_writer.writerow(course)
+                total_credits, gpa = self.calculate_gpa_and_credits(year, semester)
+                csv_writer.writerow(['หน่วยกิตที่ได้ประจำภาค', '', total_credits, '', ])
+                csv_writer.writerow(['เกรดเฉลี่ยประจำภาค', '', gpa, '', ])
+        csv_file.close()
 
 
 def get_filename():
@@ -98,7 +113,16 @@ def get_filename():
     return filename
 
 
-def input_handler(action):
+def input_handler(action, filename):
+    if action == 's':
+        gpa.save_csv(filename)
+        return
+    if action == 'a':
+        filename = input("Enter new filename: ")
+        gpa.save_csv(filename)
+        return
+    elif action == 'q':
+        return
     try:
         year = int(input('Enter year: '))
         semester = int(input('Enter semester: '))
@@ -116,7 +140,7 @@ def input_handler(action):
         print("Wrong input! Enter again!")
     except KeyError:
         print("Invalid year or semester! Enter again!")
-    input_handler(action)
+    input_handler(action, filename)
 
 
 filename = get_filename()
@@ -124,6 +148,6 @@ gpa = GpaFile(filename)
 action = None
 while action != 'q':
     print('-' * 70)
-    print("Enter action")
-    action = input('View[V] Insert[I] Edit[E] Save[S] Save As[A] Change File(C) Quit(Q): ').lower()
-    input_handler(action)
+    print("Enter action to semester")
+    action = input('View[V] Insert[I] Edit[E] Delete [D] Save[S] Save As[A] Change File(C) Quit(Q): ').lower()
+    input_handler(action, filename)
