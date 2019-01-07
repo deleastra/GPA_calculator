@@ -65,19 +65,19 @@ class GpaFile:
             if action == 'e':
                 course_no = int(input('Select course[Number]: ')) - 1
                 print('Edit course [' + self.gpa_data[year][semester][course_no][1] + ']')
+                work = None
                 course_action = input('Edit course Name[N] or Credits[C] or Grade[G]: ').lower()
                 if course_action == 'n':
-                    new_course_name = input('New course name [' + self.gpa_data[year][semester][course_no][1] + ']: ') \
-                                      or self.gpa_data[year][semester][course_no][1]
-                    self.gpa_data[year][semester][course_no][1] = new_course_name
+                    work = ['name', 1]
                 elif course_action == 'c':
-                    new_credits = input('New course credits [' + self.gpa_data[year][semester][course_no][2] + ']: ') \
-                                      or self.gpa_data[year][semester][course_no][2]
-                    self.gpa_data[year][semester][course_no][2] = new_credits
+                    work = ['grade', 2]
                 elif course_action == 'g':
-                    new_grade = input('New course grade [' + self.gpa_data[year][semester][course_no][3] + ']: ') \
-                                      or self.gpa_data[year][semester][course_no][3]
-                    self.gpa_data[year][semester][course_no][3] = new_grade
+                    work = ['grade', 3]
+                if work is not None:
+                    temp_course_data = input('New course ' + work[0] +
+                                             ' [' + self.gpa_data[year][semester][course_no][work[1]] + ']: ') \
+                                       or self.gpa_data[year][semester][course_no][work[1]]
+                    self.gpa_data[year][semester][course_no][1] = temp_course_data
             if action == 'd':
                 course_no = int(input('Select course[Number]: ')) - 1
                 del self.gpa_data[year][semester][course_no]
@@ -98,43 +98,25 @@ def get_filename():
     return filename
 
 
-def insert_semester_data():
+def input_handler(action):
     try:
         year = int(input('Enter year: '))
         semester = int(input('Enter semester: '))
         print('\n\n')
-        gpa.insert_semester(year, semester)
+        if action == 'v':
+            gpa.show_grades(year, semester)
+        elif action == 'e':
+            gpa.edit_semester(year, semester)
+        elif action == 'i':
+            gpa.insert_semester(year, semester)
+        else:
+            raise ValueError
+        return
     except ValueError:
         print("Wrong input! Enter again!")
-        insert_semester_data()
-
-
-def show_semester_data():
-    try:
-        year = int(input('Enter year: '))
-        semester = int(input('Enter semester: '))
-        print('\n\n')
-        gpa.show_grades(year, semester)
-    except ValueError:
-        print("Wrong input! Enter again!")
-        show_semester_data()
     except KeyError:
         print("Invalid year or semester! Enter again!")
-        show_semester_data()
-
-
-def edit_semester_data():
-    try:
-        year = int(input('Enter year: '))
-        semester = int(input('Enter semester: '))
-        print('\n\n')
-        gpa.edit_semester(year, semester)
-    except ValueError:
-        print("Wrong input! Enter again!")
-        edit_semester_data()
-    except KeyError:
-        print("Invalid year or semester! Enter again!")
-        edit_semester_data()
+    input_handler(action)
 
 
 filename = get_filename()
@@ -144,15 +126,4 @@ while action != 'q':
     print('-' * 70)
     print("Enter action")
     action = input('View[V] Insert[I] Edit[E] Save[S] Save As[A] Change File(C) Quit(Q): ').lower()
-    if action == 'v':
-        show_semester_data()
-    if action == 'e':
-        edit_semester_data()
-    if action == 'i':
-        insert_semester_data()
-    if action == 's':
-        pass
-    if action == 'a':
-        pass
-    if action == 'c':
-        pass
+    input_handler(action)
