@@ -88,6 +88,9 @@ class GpaFile:
         self.create_grades_dict(year, semester)
         self.edit_semester(year, semester)
 
+    def delete_semester(self, year, semester):
+        del self.gpa_data[year][semester]
+
     def save_csv(self, filename=None):
         csv_file = open(filename, 'w', newline='')
         csv_writer = csv.writer(csv_file, delimiter=',', quoting=csv.QUOTE_MINIMAL)
@@ -117,7 +120,7 @@ def input_handler(action, filename):
     if action == 's':
         gpa.save_csv(filename)
         return
-    if action == 'a':
+    elif action == 'a':
         filename = input("Enter new filename: ")
         gpa.save_csv(filename)
         return
@@ -133,14 +136,15 @@ def input_handler(action, filename):
             gpa.edit_semester(year, semester)
         elif action == 'i':
             gpa.insert_semester(year, semester)
+        elif action == 'd':
+            gpa.delete_semester(year, semester)
         else:
             raise ValueError
-        return
     except ValueError:
         print("Wrong input! Enter again!")
     except KeyError:
         print("Invalid year or semester! Enter again!")
-    input_handler(action, filename)
+    return
 
 
 filename = get_filename()
@@ -149,5 +153,5 @@ action = None
 while action != 'q':
     print('-' * 70)
     print("Enter action to semester")
-    action = input('View[V] Insert[I] Edit[E] Delete [D] Save[S] Save As[A] Change File(C) Quit(Q): ').lower()
+    action = input('View[V] Insert[I] Edit[E] Delete [D] Save[S] Save As[A] Quit(Q): ').lower()
     input_handler(action, filename)
