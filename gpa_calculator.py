@@ -77,7 +77,7 @@ class GpaFile:
                     temp_course_data = input('New course ' + work[0] +
                                              ' [' + self.gpa_data[year][semester][course_no][work[1]] + ']: ') \
                                        or self.gpa_data[year][semester][course_no][work[1]]
-                    self.gpa_data[year][semester][course_no][1] = temp_course_data
+                    self.gpa_data[year][semester][course_no][work[1]] = temp_course_data
             if action == 'd':
                 course_no = int(input('Select course[Number]: ')) - 1
                 del self.gpa_data[year][semester][course_no]
