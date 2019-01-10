@@ -37,7 +37,7 @@ class GpaFile:
         table_instance.justify_columns[2] = 'center'
         table_instance.justify_columns[3] = 'center'
         print(table_instance.table)
-        total_credits, gpa = self.calculate_gpa_and_credits(year, semester)
+        gpa, total_credits = self.calculate_gpa_and_credits(year, semester)
         print('\t\tTotal Credits: {}\tSemester GPA: {}'.format(gpa, total_credits))
 
     def calculate_gpa_and_credits(self, year, semester):
