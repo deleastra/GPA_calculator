@@ -70,7 +70,7 @@ class GpaFile:
                 if course_action == 'n':
                     work = ['name', 1]
                 elif course_action == 'c':
-                    work = ['grade', 2]
+                    work = ['credits', 2]
                 elif course_action == 'g':
                     work = ['grade', 3]
                 if work is not None:
@@ -111,8 +111,8 @@ def get_filename():
     if len(sys.argv) > 1:
         filename = sys.argv[1]
     else:
-        # filename = input("Enter Filename: ")
-        filename = 'csv_files/GPA.csv'
+        filename = input("Enter CSV Filename: ")
+        # filename = 'csv_files/GPA.csv'
     return filename
 
 
@@ -151,7 +151,9 @@ filename = get_filename()
 gpa = GpaFile(filename)
 action = None
 while action != 'q':
-    print('-' * 70)
-    print("Enter action to semester")
-    action = input('View[V] Insert[I] Edit[E] Delete [D] Save[S] Save As[A] Quit(Q): ').lower()
+    action = input('-' * 70 + '\nEnter action\n'
+                   'View Semester[V] Insert Semester[I] \n'
+                   'Edit Semester[E] Delete Semester[D] \n'
+                   'Save[S] Save As[A] Quit(Q)\n'
+                   'Action: ').lower()
     input_handler(action, filename)
